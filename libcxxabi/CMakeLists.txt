@@ -430,6 +430,11 @@ if (LIBCXXABI_HAS_UNDEFINED_SYMBOLS)
   endif()
 endif()
 
+if (NOT LIBCXXABI_ENABLE_THREADS)
+  add_definitions(-D_LIBCPP_HAS_NO_THREADS)
+  add_definitions(-D_LIBUNWIND_HAS_NO_THREADS)
+endif()
+
 if (LIBCXXABI_HAS_PTHREAD_API)
   add_definitions(-D_LIBCPP_HAS_THREAD_API_PTHREAD)
 endif()
@@ -456,6 +461,10 @@ endif()
 # Define LIBCXXABI_USE_LLVM_UNWINDER for conditional compilation.
 if (LIBCXXABI_USE_LLVM_UNWINDER)
   add_definitions(-DLIBCXXABI_USE_LLVM_UNWINDER)
+
+  if (LIBCXXABI_BAREMETAL)
+    add_definitions(-D_LIBUNWIND_BAREMETAL)
+  endif()
 endif()
 
 if (LIBCXXABI_SILENT_TERMINATE)
@@ -504,6 +513,10 @@ if (LIBCXXABI_USE_LLVM_UNWINDER OR LLVM_NATIVE_ARCH MATCHES ARM)
 
   if (NOT LIBCXXABI_LIBUNWIND_INCLUDES_INTERNAL STREQUAL "")
     include_directories("${LIBCXXABI_LIBUNWIND_INCLUDES_INTERNAL}")
+
+    if (LIBCXXABI_STANDALONE_BUILD)
+      add_subdirectory(../libunwind libunwind)
+    endif()
   endif()
 endif()
 
