@@ -424,6 +424,36 @@ public:
   }
 };
 
+// LF OS Target Info
+template <typename Target>
+class LLVM_LIBRARY_VISIBILITY LFOSTargetInfo : public OSTargetInfo<Target> {
+protected:
+  void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                    MacroBuilder &Builder) const override {
+    DefineStd(Builder, "unix", Opts);
+    Builder.defineMacro("__ELF__");
+    Builder.defineMacro("__LF_OS__");
+    Builder.defineMacro("_REENTRANT");
+    Builder.defineMacro("_GNU_SOURCE");
+    Builder.defineMacro("_NEWLIB_VERSION");
+  }
+
+public:
+  LFOSTargetInfo(const llvm::Triple &Triple, const TargetOptions &Opts)
+      : OSTargetInfo<Target>(Triple, Opts) {
+    this->WIntType = TargetInfo::UnsignedInt;
+
+    switch (Triple.getArch()) {
+    default:
+      break;
+    case llvm::Triple::x86:
+    case llvm::Triple::x86_64:
+      this->HasFloat128 = true;
+      break;
+    }
+  }
+};
+
 // NetBSD Target
 template <typename Target>
 class LLVM_LIBRARY_VISIBILITY NetBSDTargetInfo : public OSTargetInfo<Target> {

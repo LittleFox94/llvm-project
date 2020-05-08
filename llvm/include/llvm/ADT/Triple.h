@@ -167,6 +167,7 @@ public:
     IOS,
     KFreeBSD,
     Linux,
+    LFOS,
     Lv2,        // PS3
     MacOSX,
     NetBSD,
